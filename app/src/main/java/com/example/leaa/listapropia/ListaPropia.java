@@ -31,7 +31,7 @@ import java.util.Queue;
 
 public class ListaPropia extends ActionBarActivity {
     private static final String TAG = ListaPropia.class.getSimpleName();
-    SoporteListaPropia[] datos= new SoporteListaPropia[]{};
+    SoporteListaPropia[] datos= new SoporteListaPropia[10];
     ProgressBar progress;
     ListView lstOpciones;
     RequestQueue queue;
@@ -45,26 +45,23 @@ public class ListaPropia extends ActionBarActivity {
         progress = (ProgressBar)findViewById(R.id.progressBar);
 
         setearPaises("http://www.androidbegin.com/tutorial/jsonparsetutorial.txt");
-        AdaptadorPropio adaptador = new AdaptadorPropio(this,datos);
 
-
-        lstOpciones.setAdapter(adaptador);
-        lstOpciones.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
-
-            }
-        });
     }
 
     private void setearPaises(String url){
         Log.d(TAG, "entre a setear paises");
         queue=Volley.newRequestQueue(this);
         Log.d(TAG, "La segui a setear paises");
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>() {
+        JsonObjectRequest jsonObject = new JsonObjectRequest(url, null,  new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(JSONArray response) {
+            public void onResponse(JSONObject response) {
                 Log.d(TAG, "recibi respuesta");
-                armarListaDesdeString(response);
+                try{
+                    JSONArray array = response.getJSONArray("worldpopulation");
+                armarListaDesdeJsonObject(array);}
+                catch(JSONException e){
+                    e.printStackTrace();
+                }
                 Log.d(TAG, "termine armar lista");
             }
 
@@ -76,15 +73,15 @@ public class ListaPropia extends ActionBarActivity {
                 volleyError.printStackTrace();
             }
         });
-        queue.add(jsonArrayRequest);
+        queue.add(jsonObject);
         Log.d(TAG,"Agregue a queue");
     }
 
-    private void armarListaDesdeString(JSONArray array){
-        Log.d(TAG, "Estoy armando lista");
+    private void armarListaDesdeJsonObject(JSONArray array){
+        Log.d(TAG, "Estoy armando lista que mide: "+array.length());
         for(int i=0;i<array.length();i++){
             try {
-                JSONObject jso = (JSONObject) array.get(i);
+                JSONObject jso = array.getJSONObject(i);
                 SoporteListaPropia item = new SoporteListaPropia(jso.getInt("rank"),jso.getString("country"), jso.getString("population"),jso.getString("flag"));
                 datos[i]=item;
 
@@ -94,6 +91,8 @@ public class ListaPropia extends ActionBarActivity {
         }
         progress.setVisibility(View.INVISIBLE);
         lstOpciones.setVisibility(View.VISIBLE);
+        AdaptadorPropio adaptador = new AdaptadorPropio(this,datos);
+        lstOpciones.setAdapter(adaptador);
 
     }
 

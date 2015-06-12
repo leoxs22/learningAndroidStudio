@@ -41,7 +41,8 @@ public class AdaptadorPropio extends ArrayAdapter<SoporteListaPropia> {
         lblpopulation.setText("population: "+datos[position].getPopulation());
 
         ImageView imgImagen = (ImageView)item.findViewById(R.id.flag);
-        imgImagen.setImageDrawable(LoadImageFromWebOperations(datos[position].getImagen()));
+        Drawable img = LoadImageFromWebOperations(datos[position].getImagen());
+        imgImagen.setImageDrawable(img);
 
         return(item);
     }
