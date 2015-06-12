@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.InputStream;
 import java.net.URL;
 
@@ -35,27 +37,19 @@ public class AdaptadorPropio extends ArrayAdapter<SoporteListaPropia> {
         lblRanking.setText("Rank: "+datos[position].getRank());
 
         TextView lblCountry = (TextView)item.findViewById(R.id.country);
-        lblCountry.setText("Contry: "+datos[position].getCountry());
+        lblCountry.setText("Contry: " + datos[position].getCountry());
 
         TextView lblpopulation = (TextView)item.findViewById(R.id.population);
-        lblpopulation.setText("population: "+datos[position].getPopulation());
+        lblpopulation.setText("population: " + datos[position].getPopulation());
 
         ImageView imgImagen = (ImageView)item.findViewById(R.id.flag);
-        Drawable img = LoadImageFromWebOperations(datos[position].getImagen());
-        imgImagen.setImageDrawable(img);
+        Picasso.with(context).load(datos[position].getImagen()).placeholder(R.drawable.loading).into(imgImagen);
+
 
         return(item);
     }
 
-    public static Drawable LoadImageFromWebOperations(String url) {
-        try {
-            InputStream is = (InputStream) new URL(url).getContent();
-            Drawable d = Drawable.createFromStream(is, "src name");
-            return d;
-        } catch (Exception e) {
-            return null;
-        }
-    }
+
 
 
 
